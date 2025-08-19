@@ -58,7 +58,6 @@ Stack: FastAPI, PostgreSQL, Celery, RabbitMQ
 
 ### Development
 
-- Format: `black . && isort .`
 - Lint: `flake8`
 - Test: `pytest`
 
@@ -71,15 +70,4 @@ Stack: FastAPI, PostgreSQL, Celery, RabbitMQ
 - Quick reset without recreating containers (drops all tables):
   - `docker compose exec postgres psql -U oms_user -d oms_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"`
   - `docker compose exec web alembic upgrade head`
-- ## Always-ephemeral DB (optional): create `docker-compose.override.yml` with:
-  ```yaml
-  services:
-    postgres:
-      tmpfs:
-        - /var/lib/postgresql/data
-  ```
-  Then run `docker compose down && docker compose up -d`.
 
-### Notes
-
-- Phases 1-8 implemented end-to-end; invoice PDFs saved under `invoices/`.
