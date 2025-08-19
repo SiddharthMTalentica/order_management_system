@@ -35,7 +35,7 @@ Stack: FastAPI, PostgreSQL, Celery, RabbitMQ
 - `CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//`
 - `TIMEZONE=Asia/Kolkata`, `CURRENCY=INR`
 - `PAYMENT_GATEWAY_BASE_URL=http://payment-gateway:9000`
-- `INVOICE_OUTPUT_DIR=/data/invoices`
+- `INVOICE_OUTPUT_DIR=./invoices`
 
 ### Observability
 
