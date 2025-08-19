@@ -61,6 +61,11 @@ Stack: FastAPI, PostgreSQL, Celery, RabbitMQ
 - Lint: `flake8`
 - Test: `pytest`
 
+### Test
+TEST CASE ANALYSIS : docker compose exec web pytest -q
+REPORT GENERATION :  docker compose exec web pytest --cov=app --cov=worker --cov-report=html -q
+<!-- open htmlcov/index.html -->
+
 ### Reset database (dev)
 
 - Full reset (removes DB volume):
