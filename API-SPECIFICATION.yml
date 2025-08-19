@@ -1,0 +1,320 @@
+openapi: 3.0.3
+info:
+  title: Order & Returns Management System API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+  /orders:
+    get:
+      summary: List orders
+      responses:
+        "200": { description: OK }
+    post:
+      summary: Create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderRead"
+  /orders/{order_id}:
+    get:
+      summary: Get order by id
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+  /orders/{order_id}/pay:
+    post:
+      summary: Mark order as paid
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /orders/{order_id}/processing:
+    post:
+      summary: Mark order as processing in warehouse
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /orders/{order_id}/ship:
+    post:
+      summary: Mark order as shipped (queues invoice generation)
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /orders/{order_id}/deliver:
+    post:
+      summary: Mark order as delivered
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /orders/{order_id}/cancel:
+    post:
+      summary: Cancel order (only before processing)
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /orders/{order_id}/history:
+    get:
+      summary: State transition history for order
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+  /returns:
+    get:
+      summary: List returns
+      responses:
+        "200": { description: OK }
+    post:
+      summary: Create return (only for delivered orders)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReturnCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReturnRead"
+  /returns/{return_id}:
+    get:
+      summary: Get return by id
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+  /returns/{return_id}/approve:
+    post:
+      summary: Approve return
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /returns/{return_id}/reject:
+    post:
+      summary: Reject return
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /returns/{return_id}/in-transit:
+    post:
+      summary: Mark return in transit
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /returns/{return_id}/received:
+    post:
+      summary: Mark return received
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /returns/{return_id}/complete:
+    post:
+      summary: Complete return (queues refund processing)
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransitionRequest" }
+      responses:
+        "200": { description: OK }
+        "400": { description: Invalid transition }
+  /returns/{return_id}/history:
+    get:
+      summary: State transition history for return
+      parameters:
+        - in: path
+          name: return_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+components:
+  schemas:
+    OrderItemCreate:
+      type: object
+      properties:
+        sku: { type: string }
+        title: { type: string }
+        quantity: { type: integer, minimum: 1 }
+        unit_price_minor: { type: integer, minimum: 0 }
+      required: [sku, title, quantity, unit_price_minor]
+    OrderCreate:
+      type: object
+      properties:
+        order_number: { type: string }
+        customer_id: { type: string }
+        currency: { type: string, default: INR }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/OrderItemCreate" }
+      required: [order_number, customer_id, items]
+    OrderReadItem:
+      type: object
+      properties:
+        id: { type: integer }
+        sku: { type: string }
+        title: { type: string }
+        quantity: { type: integer }
+        unit_price_minor: { type: integer }
+    OrderRead:
+      type: object
+      properties:
+        id: { type: integer }
+        order_number: { type: string }
+        customer_id: { type: string }
+        currency: { type: string }
+        state: { type: string }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/OrderReadItem" }
+    ReturnItemCreate:
+      type: object
+      properties:
+        order_item_id: { type: integer }
+        quantity: { type: integer, minimum: 1 }
+      required: [order_item_id, quantity]
+    ReturnCreate:
+      type: object
+      properties:
+        order_id: { type: integer }
+        reason: { type: string }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ReturnItemCreate" }
+      required: [order_id, items]
+    ReturnReadItem:
+      type: object
+      properties:
+        id: { type: integer }
+        order_item_id: { type: integer }
+        quantity: { type: integer }
+    ReturnRead:
+      type: object
+      properties:
+        id: { type: integer }
+        order_id: { type: integer }
+        state: { type: string }
+        reason: { type: string }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ReturnReadItem" }
+    TransitionRequest:
+      type: object
+      properties:
+        reason: { type: string }
+        actor: { type: string }

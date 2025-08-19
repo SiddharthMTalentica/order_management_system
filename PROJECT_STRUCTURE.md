@@ -1,0 +1,24 @@
+### Project Structure
+
+- `app/`: FastAPI application and domain
+  - `main.py`: App bootstrap, health, metrics, router wiring
+  - `api/`: Routers for orders and returns
+  - `schemas/`: Pydantic request/response models
+  - `domain/`: State machines and domain services
+  - `db/`: SQLAlchemy base and session
+  - `middleware/`: Request ID middleware
+  - `models/`: SQLAlchemy models
+- `worker/`: Celery setup and background tasks
+  - `celery_app.py`: Celery app configuration (single durable queue `oms`)
+  - `tasks.py`: Invoice generation (PDF) and refund processing
+- `payment_gateway_service/`: Local mock payment service
+- `alembic/`: Migrations (env, versions)
+- `API-SPECIFICATION.yml`: OpenAPI definition of endpoints
+- `requirements.txt`: Dependencies
+- `docker-compose.yml`: Orchestration for local stack; mounts `./invoices` into containers
+- `Dockerfile`: Base image for all services
+- `.dockerignore`, `.flake8`, `pyproject.toml`: Tooling config
+- `README.md`: Setup, run, schema table descriptions, observability
+- `TASK_PROGRESS.md`: Phase checklist and status
+- `WORKFLOW_DESIGN.md`: Workflow diagrams and detailed DB schema descriptions
+- `invoices/`: Generated invoice PDFs (host-mounted)
