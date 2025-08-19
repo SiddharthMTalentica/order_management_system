@@ -71,9 +71,9 @@ Relationships:
   - Columns:
     - id: bigint PK
     - entity_type: 'order' | 'return'
-    - entity_id: bigint, references the primary key of the entity row 
-            If entity_type="order" → entity_id = orders.id
-            If entity_type="return" → entity_id = returns.id
+    - entity_id: bigint, references the primary key of the entity row
+      If entity_type="order" → entity_id = orders.id
+      If entity_type="return" → entity_id = returns.id
     - from_state: string(32), nullable for initial state
     - to_state: string(32), target state
     - actor: string(64), optional (e.g., user or system trigger)
